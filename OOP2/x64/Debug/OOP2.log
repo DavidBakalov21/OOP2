@@ -1,5 +1,5 @@
 ﻿  OOP2.cpp
-C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(48,75): warning C4244: 'argument': conversion from '_Rep' to 'unsigned int', possible loss of data
+C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(56,75): warning C4244: 'argument': conversion from '_Rep' to 'unsigned int', possible loss of data
           with
           [
               _Rep=std::chrono::system_clock::rep
