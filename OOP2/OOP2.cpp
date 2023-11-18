@@ -6,6 +6,7 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include <limits>
 
 
 
@@ -228,17 +229,18 @@ public:
     void AddItem(const std::shared_ptr<Electronics>& electronicProduct) {
         products.push_back(electronicProduct);
     }
-    void AddProduct(const std::shared_ptr<Books>& bookProduct) {
+    void AddItem(const std::shared_ptr<Books>& bookProduct) {
         products.push_back(bookProduct);
     }
 
-    void AddProduct(const std::shared_ptr<Clothing>& clothingProduct) {
+    void AddItem(const std::shared_ptr<Clothing>& clothingProduct) {
         products.push_back(clothingProduct);
     }
     void UpdateQuantuty(const std::string& productName, const int newQuantity) {
         for (int i = 0; i < products.size(); i++) {
             if (products[i]->getName() == productName) {
                 products[i]->Setquantity(newQuantity);
+                std::cout << products[i]->getQuantityInStock() << " left" << std::endl;
                 std::cout << "quantity set" << std::endl;
                 break;
             }
@@ -263,6 +265,16 @@ public:
             }
         }
     }
+    void Delete(const std::string& productName) {
+        for (int i = 0; i < products.size(); i++) {
+            if (products[i]->getName() == productName) {
+            
+                std::cout << "Deleted " <<productName << std::endl;
+                products.erase(products.begin() + i);
+            }
+        
+        }
+    }
 
 
 
@@ -273,7 +285,7 @@ private:
 };
 class Order {
 public:
-    Order(std::string oId, std::string cust, std::vector<std::shared_ptr<Product>> prod, std::string s) : orderID(oId), customer(cust), products(prod),  orderStatus(s){}
+    Order(std::string& cust) : customer(cust), orderID(GenerateId()){}
     void addProduct(const std::shared_ptr<Product>& newProduct) {
         products.push_back(newProduct);
     }
@@ -295,6 +307,8 @@ public:
         int quantity = inventory.ShowQuantity(productName);
         if (quantity > 0) {
             inventory.UpdateQuantuty(productName, quantity - 1);
+            std::string status = "Shipped";
+            this->changeStatus(status);
             std::cout << "Product shipped: " << productName <<" for " <<customer <<std::endl;
            
         }
@@ -309,6 +323,20 @@ private:
     std::vector<std::shared_ptr<Product>> products;
     int totalCost;
     std::string orderStatus;
+    std::mt19937 rng;
+    std::string GenerateId() {
+
+        rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
+
+        std::string result = "";
+        std::uniform_int_distribution<int> dist(1, 9);
+
+        for (int i = 0; i < 27; i++) {
+            int iRand = dist(rng);
+            result += std::to_string(iRand);
+        }
+        return result;
+    }
 
 
 };
@@ -331,7 +359,7 @@ public:
     void UpdateElectronicProduct(const std::string& productName, const std::string& newBrand, const std::string& newModel, int newPowerConsumption, const std::string& newName, int newPrice) {
         for (int i = 0; i < products.size(); i++) {
             if (products[i]->getName() == productName) {
-                //converting base class to derived one
+                //converting base class to derived one (electronics)
                 std::shared_ptr<Electronics> electronicPtr = std::dynamic_pointer_cast<Electronics>(products[i]);
                     electronicPtr->setBrand(newBrand);
                     electronicPtr->setModel(newModel);
@@ -381,7 +409,7 @@ public:
     void ViewList() {
         for (int i = 0; i < products.size(); i++) {
             std::string ProductEl=products[i]->getName();
-            std::cout << ProductEl << std::endl;
+            std::cout << ProductEl << ", Price:" << products[i]->getPrice() <<"Quantity:" << products[i]->getQuantityInStock() <<std::endl;
         }
     }
 private:
@@ -393,24 +421,122 @@ private:
 
 int main()
 {
-    ProductCatalog catalog;
     FileConfig fileConfig;
+    ProductCatalog catalog;
+    Inventory inventory;
     fileConfig.ReadReturn("C:/Users/Давід/source/repos/OOP2/OOP2/config.txt");
-
     std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
     //The point I have three conditionals is that I have three overloaded methods "AddProduct", and each method wants it's own data type
     for (int i = 0; i < configProducts.size(); i++) {
         if (std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i])) {
             catalog.AddProduct(elec);
+            inventory.AddItem(elec);
         }
         else if (std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i])) {
             catalog.AddProduct(book);
+            inventory.AddItem(book);
         }
         else if (std::shared_ptr<Clothing> cloth = std::dynamic_pointer_cast<Clothing>(configProducts[i])) {
             catalog.AddProduct(cloth);
+            inventory.AddItem(cloth);
         }
     }
-    catalog.ViewList();
+    std::cout << "1-View Products, 2-Delete Product, 3-Update Quantity, 4-Update Product, 5-buy some\n";
+
+    while (true) {
+        int choice;
+        std::cin >> choice;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        switch (choice) {
+        case 1: {
+            catalog.ViewList();
+            break;
+        }
+        case 2: {
+            std::string name;
+            std::cin >> name;
+            catalog.RemoveProduct(name);
+            inventory.Delete(name);
+            break;
+        }
+        case 3: {
+            std::string name;
+            std::cin >> name;
+            int nQuantiy;
+            std::cin >> nQuantiy;
+            inventory.UpdateQuantuty(name,nQuantiy);
+            break;
+        }
+        case 4: {
+            std::string Choice;
+            std::cin >> Choice;
+            if (Choice=="el")
+            {
+                std::string name;
+                std::string Brand;
+                std::string Model;
+                int Power;
+                std::string NewName;
+                int newPrice;
+
+                std::cin >> name;
+                std::cin >>Brand;
+                std::cin >> Model;
+                std::cin >> Power;
+                std::cin >> NewName;
+                std::cin >> newPrice;
+                catalog.UpdateElectronicProduct(name,Brand,Model,Power,NewName,newPrice);
+            }
+            else if (Choice == "bo") {
+              
+                std::string name;
+                std::string newAuthor;
+                std::string newGenre;
+                int ISBN;
+                std::string NewName;
+                int newPrice;
+
+                std::cin >> name;
+                std::cin >> newAuthor;
+                std::cin >> newGenre;
+                std::cin >> ISBN;
+                std::cin >> NewName;
+                std::cin >> newPrice;
+                catalog.UpdateBookProduct(name,newAuthor,newGenre,ISBN,NewName,newPrice);
+            }
+            else if (Choice == "cl") {
+
+                std::string name;
+                std::string newSize;
+                std::string newColor;
+                std::string newMaterial;
+                std::string NewName;
+                int newPrice;
+
+                std::cin >> name;
+                std::cin >> newSize;
+                std::cin >> newColor;
+                std::cin >> newMaterial;
+                std::cin >> NewName;
+                std::cin >> newPrice;
+                catalog.UpdateClothongProduct(name,newSize,newColor,newMaterial,NewName,newPrice);
+
+            }
+            break;
+        }
+        case 5: {
+            std::string nema = "For Me";
+            std::string desired;
+            std::cin >> desired;
+            Order order(nema);
+            order.shipProduct(inventory, desired);
+            break;
+        }
+        default:
+            std::cout << "Wrong number\n";
+            break;
+        }
+    }
 }
 
 
