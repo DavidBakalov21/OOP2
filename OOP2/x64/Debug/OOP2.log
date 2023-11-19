@@ -1,13 +1,8 @@
 ﻿  OOP2.cpp
-C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(57,75): warning C4244: 'argument': conversion from '_Rep' to 'unsigned int', possible loss of data
+C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(273,75): warning C4244: 'argument': conversion from '_Rep' to 'unsigned int', possible loss of data
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(329,75): warning C4244: 'argument': conversion from '_Rep' to 'unsigned int', possible loss of data
-          with
-          [
-              _Rep=std::chrono::system_clock::rep
-          ]
-C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(267): warning C4715: 'Inventory::ShowQuantity': not all control paths return a value
+C:\Users\Давід\source\repos\OOP2\OOP2\OOP2.cpp(211): warning C4715: 'Inventory::ShowQuantity': not all control paths return a value
   OOP2.vcxproj -> C:\Users\Давід\source\repos\OOP2\x64\Debug\OOP2.exe

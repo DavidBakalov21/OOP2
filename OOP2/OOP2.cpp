@@ -7,65 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include "Product.h"
 
 
-
-class Product {
-    
-public:
-    // need it to make Product polymorphic
-    virtual ~Product() {}
-    // need it to make Product polymorphic
-    Product(std::string n, int priceProd, int q) :productID(GenerateId()), name(n), price(priceProd), quantityInStock(q) {}
-
-
-    void SetName(std::string NameNew) {
-        name = NameNew;
-    }
-    void SetProId(std::string PId) {
-        productID = PId;
-    }
-    void SetPrice(int newPrice) {
-        price = newPrice;
-    }
-    void Setquantity(int newQuantity) {
-        quantityInStock =newQuantity;
-    }
-    std::string getName() {
-        return name;
-    }
-    int getPrice() {
-        return price;
-    }
-    int getQuantityInStock() {
-        return quantityInStock;
-    }
-    std::string getID() {
-        return productID;
-    }
-    int totalPrice() {
-        return quantityInStock * price;
-    }
-private:
-    std::string productID;
-    std::string name;
-    int price;
-    int quantityInStock;
-    std::mt19937 rng;
-    std::string GenerateId() {
-       
-        rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
-
-        std::string result = "";
-        std::uniform_int_distribution<int> dist(1, 9);
-
-        for (int i = 0; i < 27; i++) {
-            int iRand = dist(rng);
-            result += std::to_string(iRand);
-        }
-        return result;
-    }
-};
 class Electronics : public Product {
 public:
     Electronics(std::string n, int priceProd, int q, std::string b, std::string m, int power): Product(n, priceProd, q), brand(b), model(m), powerConsumption(power) {}
@@ -167,7 +111,7 @@ private:
 
 class FileConfig {
 public:
-    FileConfig() {}
+    FileConfig() = default;
 
     void ReadReturn(const std::string& name) {
         std::ifstream file(name);
@@ -409,7 +353,7 @@ public:
     void ViewList() {
         for (int i = 0; i < products.size(); i++) {
             std::string ProductEl=products[i]->getName();
-            std::cout << ProductEl << ", Price:" << products[i]->getPrice() <<"Quantity:" << products[i]->getQuantityInStock() <<std::endl;
+            std::cout << ProductEl << ", Price:" << products[i]->getPrice() <<"Quantity:" << products[i]->getQuantityInStock() <<" Id:" << products[i]->getID() <<std::endl;
         }
     }
 private:
@@ -428,6 +372,7 @@ int main()
     std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
     //The point I have three conditionals is that I have three overloaded methods "AddProduct", and each method wants it's own data type
     for (int i = 0; i < configProducts.size(); i++) {
+
         if (std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i])) {
             catalog.AddProduct(elec);
             inventory.AddItem(elec);
@@ -485,7 +430,7 @@ int main()
                 std::cin >> Power;
                 std::cin >> NewName;
                 std::cin >> newPrice;
-                catalog.UpdateElectronicProduct(name,Brand,Model,Power,NewName,newPrice);
+                catalog.UpdateElectronicProduct(name,Brand,Model,Power,NewName,newPrice); 
             }
             else if (Choice == "bo") {
               
