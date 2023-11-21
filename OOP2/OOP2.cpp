@@ -22,18 +22,23 @@ public:
     void setPowerConsumption(int newPower) {
         powerConsumption = newPower;
     }
-    std::string getBrand()  {
+    std::string getBrand() const {
         return brand;
     }
-    std::string getModel()  {
+    std::string getModel()  const{
         return model;
     }
-    int getPowerConsumption() {
+    int getPowerConsumption() const {
         return powerConsumption;
     }
 
     void DisplayPowerConsumption() {
         std::cout<<"Power consumption is: " << powerConsumption << std::endl;
+    }
+
+    virtual void displayDetails() const override {
+        std::cout << "Name: " << this->getName() <<", Price: " << this->getPrice()<< ", Quantity:"<< this->getQuantityInStock()<<std::endl;
+        std::cout << "Id: " << this->getID() << ", Brand: " << this->getBrand() << ", Model:" << this->getModel() <<", Power:"<<this->getPowerConsumption() <<std::endl;
     }
 private:
     std::string brand;
@@ -46,13 +51,13 @@ class Books : public Product {
 public:
     Books(std::string n, int priceProd, int q, std::string a, std::string g, std::string IN) : Product(n, priceProd, q), author(a), genre(g), ISBN(IN) {}
   
-    std::string getAuthor() {
+    std::string getAuthor() const{
         return author;
     }
-    std::string getGenre() {
+    std::string getGenre() const{
         return genre;
     }
-    std::string getISBN() {
+    std::string getISBN() const{
         return ISBN;
     }
 
@@ -69,6 +74,11 @@ public:
     void DisplayPowerConsumption() {
         std::cout<<"Author is: " << author << std::endl;
     }
+
+    virtual void displayDetails() const override {
+        std::cout << "Name: " << this->getName() << ", Price: " << this->getPrice() << ", Quantity:" << this->getQuantityInStock() << std::endl;
+        std::cout << "Id: " << this->getID() << ", Author: " << this->getAuthor() << ", Genre:" << this->getGenre() << ", ISBN:" << this->getISBN() << std::endl;
+    }
 private:
     std::string author;
     std::string genre;
@@ -80,13 +90,13 @@ class Clothing : public Product {
 public:
     Clothing(std::string n, int priceProd, int q, std::string s, std::string c, std::string m) : Product( n, priceProd, q), size(s), color(c), material(m) {}
   
-    std::string getSize() {
+    std::string getSize() const {
         return size;
     }
-    std::string getMaterial() {
+    std::string getMaterial() const {
         return material;
     }
-    std::string getColor() {
+    std::string getColor() const {
         return color;
     }
 
@@ -102,6 +112,11 @@ public:
 
     void DisplayPowerConsumption() {
         std::cout << "The size is: " << size << std::endl;
+    }
+
+    virtual void displayDetails() const override {
+        std::cout << "Name: " << this->getName() << ", Price: " << this->getPrice() << ", Quantity:" << this->getQuantityInStock() << std::endl;
+        std::cout << "Id: " << this->getID() << ", Size: " << this->getSize() << ", Material:" << this->getMaterial() << ", color:" << this->getColor() << std::endl;
     }
 private:
     std::string size;
@@ -372,10 +387,13 @@ int main()
     std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
     //The point I have three conditionals is that I have three overloaded methods "AddProduct", and each method wants it's own data type
     for (int i = 0; i < configProducts.size(); i++) {
-
+        configProducts[i]->displayDetails();
+        std::cout << "-------" << std::endl;
         if (std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i])) {
             catalog.AddProduct(elec);
             inventory.AddItem(elec);
+           
+                
         }
         else if (std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i])) {
             catalog.AddProduct(book);
@@ -387,7 +405,8 @@ int main()
         }
     }
     std::cout << "1-View Products, 2-Delete Product, 3-Update Quantity, 4-Update Product, 5-buy some\n";
-
+    
+    /*
     while (true) {
         int choice;
         std::cin >> choice;
@@ -482,6 +501,7 @@ int main()
             break;
         }
     }
+    */
 }
 
 

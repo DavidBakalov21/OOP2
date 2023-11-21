@@ -10,7 +10,7 @@ class Product {
 public:
     virtual ~Product();
     Product(std::string n, int priceProd, int q);
-
+    virtual void displayDetails() const = 0;
     void SetName(std::string NameNew);
     void SetProId(std::string PId);
     void SetPrice(int newPrice);
