@@ -67,7 +67,7 @@ public:
     void setGenre(const std::string& newGenre) {
         genre = newGenre;
     }
-    void setISBN(int newISBN) {
+    void setISBN(std::string newISBN) {
         ISBN = newISBN;
     }
 
@@ -115,7 +115,7 @@ public:
     }
 
     virtual void displayDetails() const override {
-        std::cout << "Name: " << this->getName() << ", Price: " << this->getPrice() << ", Quantity:" << this->getQuantityInStock() << std::endl;
+        std::cout << "Naaaaame: " << this->getName() << ", Price: " << this->getPrice() << ", Quantity:" << this->getQuantityInStock() << std::endl;
         std::cout << "Id: " << this->getID() << ", Size: " << this->getSize() << ", Material:" << this->getMaterial() << ", color:" << this->getColor() << std::endl;
     }
 private:
@@ -185,16 +185,10 @@ private:
 class Inventory {
 public:
     Inventory() {}
-    void AddItem(const std::shared_ptr<Electronics>& electronicProduct) {
-        products.push_back(electronicProduct);
+    void AddItem(const std::shared_ptr<Product>& Product) {
+        products.push_back(Product);
     }
-    void AddItem(const std::shared_ptr<Books>& bookProduct) {
-        products.push_back(bookProduct);
-    }
-
-    void AddItem(const std::shared_ptr<Clothing>& clothingProduct) {
-        products.push_back(clothingProduct);
-    }
+ 
     void UpdateQuantuty(const std::string& productName, const int newQuantity) {
         for (int i = 0; i < products.size(); i++) {
             if (products[i]->getName() == productName) {
@@ -303,17 +297,10 @@ private:
 class ProductCatalog {
 public:
     ProductCatalog(){}
-    void AddProduct(const std::shared_ptr<Electronics>& electronicProduct) {
-        products.push_back(electronicProduct);
+    void AddProduct(const std::shared_ptr<Product>& Product) {
+        products.push_back(Product);
     }
 
-    void AddProduct(const std::shared_ptr<Books>& bookProduct) {
-        products.push_back(bookProduct);
-    }
-
-    void AddProduct(const std::shared_ptr<Clothing>& clothingProduct) {
-        products.push_back(clothingProduct);
-    }
 
     void UpdateElectronicProduct(const std::string& productName, const std::string& newBrand, const std::string& newModel, int newPowerConsumption, const std::string& newName, int newPrice) {
         for (int i = 0; i < products.size(); i++) {
@@ -330,7 +317,7 @@ public:
     }
 
 
-    void UpdateBookProduct(const std::string& productName, const std::string& newAuthor, const std::string& newGenre, int newISBN, const std::string& newName, int newPrice) {
+    void UpdateBookProduct(const std::string& productName, const std::string& newAuthor, const std::string& newGenre, const std::string& newISBN, const std::string& newName, int newPrice) {
         for (int i = 0; i < products.size(); i++) {
             if (products[i]->getName() == productName) {
                 std::shared_ptr<Books> BookPtr = std::dynamic_pointer_cast<Books>(products[i]);
@@ -385,28 +372,28 @@ int main()
     Inventory inventory;
     fileConfig.ReadReturn("C:/Users/Давід/source/repos/OOP2/OOP2/config.txt");
     std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
-    //The point I have three conditionals is that I have three overloaded methods "AddProduct", and each method wants it's own data type
     for (int i = 0; i < configProducts.size(); i++) {
+        std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i]);
+        std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i]);
+        if (book) {
+            book->setISBN("gggg");
+        }
+        if (elec)
+        {
+            elec->setPowerConsumption(11);
+        }
+
         configProducts[i]->displayDetails();
         std::cout << "-------" << std::endl;
-        if (std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i])) {
-            catalog.AddProduct(elec);
-            inventory.AddItem(elec);
+            catalog.AddProduct(configProducts[i]);
+            inventory.AddItem(configProducts[i]);
            
                 
-        }
-        else if (std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i])) {
-            catalog.AddProduct(book);
-            inventory.AddItem(book);
-        }
-        else if (std::shared_ptr<Clothing> cloth = std::dynamic_pointer_cast<Clothing>(configProducts[i])) {
-            catalog.AddProduct(cloth);
-            inventory.AddItem(cloth);
-        }
+        
     }
     std::cout << "1-View Products, 2-Delete Product, 3-Update Quantity, 4-Update Product, 5-buy some\n";
     
-    /*
+    
     while (true) {
         int choice;
         std::cin >> choice;
@@ -456,7 +443,7 @@ int main()
                 std::string name;
                 std::string newAuthor;
                 std::string newGenre;
-                int ISBN;
+                std::string ISBN;
                 std::string NewName;
                 int newPrice;
 
@@ -501,7 +488,7 @@ int main()
             break;
         }
     }
-    */
+    
 }
 
 

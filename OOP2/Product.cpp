@@ -1,10 +1,10 @@
 #include "Product.h"
-
+IDGenerator Product::idGen;
 Product::~Product() {
 }
 
 Product::Product(std::string n, int priceProd, int q)
-    : productID(GenerateId()), name(n), price(priceProd), quantityInStock(q) {
+    : productID(idGen.GenerateId()), name(n), price(priceProd), quantityInStock(q) {
 }
 
 void Product::SetName(std::string NameNew) {
@@ -43,13 +43,3 @@ int Product::totalPrice() const {
     return quantityInStock * price;
 }
 
-std::string Product::GenerateId() {
-    rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
-    std::string result = "";
-    std::uniform_int_distribution<int> dist(1, 9);
-    for (int i = 0; i < 27; i++) {
-        int iRand = dist(rng);
-        result += std::to_string(iRand);
-    }
-    return result;
-}

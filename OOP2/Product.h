@@ -1,11 +1,25 @@
-#ifndef PRODUCT_H
-#define PRODUCT_H
-
+#pragma once
 
 #include <string>
 
 #include <random>
 #include <chrono>
+
+class IDGenerator {
+private:
+    std::mt19937 rng;
+public:
+    std::string GenerateId() {
+        rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
+        std::string result = "";
+        std::uniform_int_distribution<int> dist(1, 9);
+        for (int i = 0; i < 27; i++) {
+            int iRand = dist(rng);
+            result += std::to_string(iRand);
+        }
+        return result;
+    }
+};
 class Product {
 public:
     virtual ~Product();
@@ -21,13 +35,10 @@ public:
     std::string getID() const;
     int totalPrice() const;
 
-private:
+private: 
     std::string productID;
     std::string name;
     int price;
     int quantityInStock;
-    std::mt19937 rng;
-    std::string GenerateId();
+    static IDGenerator idGen;
 };
-
-#endif
