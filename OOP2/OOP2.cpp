@@ -363,131 +363,145 @@ private:
     
 };
 
+class Command {
+
+public:
+    Command() {
+        fileConfig.ReadReturn("C:/Users/Давід/source/repos/OOP2/OOP2/config.txt");
+        std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
+        for (int i = 0; i < configProducts.size(); i++) {
+            std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i]);
+            std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i]);
+            if (book) {
+                book->setISBN("ggvvvvsdgg");
+            }
+            if (elec)
+            {
+                elec->setPowerConsumption(11);
+            }
+
+            configProducts[i]->displayDetails();
+            std::cout << "-------" << std::endl;
+            catalog.AddProduct(configProducts[i]);
+            inventory.AddItem(configProducts[i]);
 
 
-int main()
-{
+
+        }
+
+    }
+    void CommandINput() {
+        std::cout << "1-View Products, 2-Delete Product, 3-Update Quantity, 4-Update Product, 5-buy some\n";
+
+
+        while (true) {
+            int choice;
+            std::cin >> choice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            switch (choice) {
+            case 1: {
+                catalog.ViewList();
+                break;
+            }
+            case 2: {
+                std::string name;
+                std::cin >> name;
+                catalog.RemoveProduct(name);
+                inventory.Delete(name);
+                break;
+            }
+            case 3: {
+                std::string name;
+                std::cin >> name;
+                int nQuantiy;
+                std::cin >> nQuantiy;
+                inventory.UpdateQuantuty(name, nQuantiy);
+                break;
+            }
+            case 4: {
+                std::string Choice;
+                std::cin >> Choice;
+                if (Choice == "el")
+                {
+                    std::string name;
+                    std::string Brand;
+                    std::string Model;
+                    int Power;
+                    std::string NewName;
+                    int newPrice;
+
+                    std::cin >> name;
+                    std::cin >> Brand;
+                    std::cin >> Model;
+                    std::cin >> Power;
+                    std::cin >> NewName;
+                    std::cin >> newPrice;
+                    catalog.UpdateElectronicProduct(name, Brand, Model, Power, NewName, newPrice);
+                }
+                else if (Choice == "bo") {
+
+                    std::string name;
+                    std::string newAuthor;
+                    std::string newGenre;
+                    std::string ISBN;
+                    std::string NewName;
+                    int newPrice;
+
+                    std::cin >> name;
+                    std::cin >> newAuthor;
+                    std::cin >> newGenre;
+                    std::cin >> ISBN;
+                    std::cin >> NewName;
+                    std::cin >> newPrice;
+                    catalog.UpdateBookProduct(name, newAuthor, newGenre, ISBN, NewName, newPrice);
+                }
+                else if (Choice == "cl") {
+
+                    std::string name;
+                    std::string newSize;
+                    std::string newColor;
+                    std::string newMaterial;
+                    std::string NewName;
+                    int newPrice;
+
+                    std::cin >> name;
+                    std::cin >> newSize;
+                    std::cin >> newColor;
+                    std::cin >> newMaterial;
+                    std::cin >> NewName;
+                    std::cin >> newPrice;
+                    catalog.UpdateClothongProduct(name, newSize, newColor, newMaterial, NewName, newPrice);
+
+                }
+                break;
+            }
+            case 5: {
+                std::string nema = "For Me";
+                std::string desired;
+                std::cin >> desired;
+                Order order(nema);
+                order.shipProduct(inventory, desired);
+                break;
+            }
+            default:
+                std::cout << "Wrong number\n";
+                break;
+            }
+        }
+    }
+private:
     FileConfig fileConfig;
     ProductCatalog catalog;
     Inventory inventory;
-    fileConfig.ReadReturn("C:/Users/Давід/source/repos/OOP2/OOP2/config.txt");
-    std::vector<std::shared_ptr<Product>> configProducts = fileConfig.GiveInfo();
-    for (int i = 0; i < configProducts.size(); i++) {
-        std::shared_ptr<Books> book = std::dynamic_pointer_cast<Books>(configProducts[i]);
-        std::shared_ptr<Electronics> elec = std::dynamic_pointer_cast<Electronics>(configProducts[i]);
-        if (book) {
-            book->setISBN("gggg");
-        }
-        if (elec)
-        {
-            elec->setPowerConsumption(11);
-        }
+};
 
-        configProducts[i]->displayDetails();
-        std::cout << "-------" << std::endl;
-            catalog.AddProduct(configProducts[i]);
-            inventory.AddItem(configProducts[i]);
-           
-                
-        
-    }
-    std::cout << "1-View Products, 2-Delete Product, 3-Update Quantity, 4-Update Product, 5-buy some\n";
+int main()
+{
     
+    Command Programm;
+    Programm.CommandINput();
     
-    while (true) {
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        switch (choice) {
-        case 1: {
-            catalog.ViewList();
-            break;
-        }
-        case 2: {
-            std::string name;
-            std::cin >> name;
-            catalog.RemoveProduct(name);
-            inventory.Delete(name);
-            break;
-        }
-        case 3: {
-            std::string name;
-            std::cin >> name;
-            int nQuantiy;
-            std::cin >> nQuantiy;
-            inventory.UpdateQuantuty(name,nQuantiy);
-            break;
-        }
-        case 4: {
-            std::string Choice;
-            std::cin >> Choice;
-            if (Choice=="el")
-            {
-                std::string name;
-                std::string Brand;
-                std::string Model;
-                int Power;
-                std::string NewName;
-                int newPrice;
 
-                std::cin >> name;
-                std::cin >>Brand;
-                std::cin >> Model;
-                std::cin >> Power;
-                std::cin >> NewName;
-                std::cin >> newPrice;
-                catalog.UpdateElectronicProduct(name,Brand,Model,Power,NewName,newPrice); 
-            }
-            else if (Choice == "bo") {
-              
-                std::string name;
-                std::string newAuthor;
-                std::string newGenre;
-                std::string ISBN;
-                std::string NewName;
-                int newPrice;
-
-                std::cin >> name;
-                std::cin >> newAuthor;
-                std::cin >> newGenre;
-                std::cin >> ISBN;
-                std::cin >> NewName;
-                std::cin >> newPrice;
-                catalog.UpdateBookProduct(name,newAuthor,newGenre,ISBN,NewName,newPrice);
-            }
-            else if (Choice == "cl") {
-
-                std::string name;
-                std::string newSize;
-                std::string newColor;
-                std::string newMaterial;
-                std::string NewName;
-                int newPrice;
-
-                std::cin >> name;
-                std::cin >> newSize;
-                std::cin >> newColor;
-                std::cin >> newMaterial;
-                std::cin >> NewName;
-                std::cin >> newPrice;
-                catalog.UpdateClothongProduct(name,newSize,newColor,newMaterial,NewName,newPrice);
-
-            }
-            break;
-        }
-        case 5: {
-            std::string nema = "For Me";
-            std::string desired;
-            std::cin >> desired;
-            Order order(nema);
-            order.shipProduct(inventory, desired);
-            break;
-        }
-        default:
-            std::cout << "Wrong number\n";
-            break;
-        }
-    }
     
 }
 
